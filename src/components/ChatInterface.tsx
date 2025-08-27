@@ -4,6 +4,7 @@ import MessageInput from './MessageInput'
 import PhilosophySelector from './PhilosophySelector'
 import { philosophyAI, type ConversationContext } from '../services/openaiService'
 import { getDailyQuote } from '../data/philosophyQuotes'
+import type { useConversationHistory } from '../hooks/useConversationHistory'
 
 export interface Message {
   id: string
@@ -12,8 +13,11 @@ export interface Message {
   timestamp: Date
 }
 
-const ChatInterface = () => {
-  const [messages, setMessages] = useState<Message[]>([])
+interface ChatInterfaceProps {
+  conversationHistory: ReturnType<typeof useConversationHistory>
+}
+
+const ChatInterface = ({ conversationHistory }: ChatInterfaceProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [context, setContext] = useState<ConversationContext>({
     difficulty: 'beginner',
@@ -22,28 +26,33 @@ const ChatInterface = () => {
     }
   })
 
-  // Initialize with daily wisdom
+  const currentConversation = conversationHistory.getCurrentConversation()
+  const messages = currentConversation?.messages || []
+
+  // Initialize conversation if none exists
   useEffect(() => {
-    const initializeChat = async () => {
-      try {
-        const dailyWisdom = await philosophyAI.generateDailyWisdom()
-        const welcomeMessage: Message = {
-          id: '1',
-          content: `Welcome to Philosophy Chat! I'm here to explore the depths of wisdom with you. 
+    if (!currentConversation) {
+      const initializeChat = async () => {
+        try {
+          const dailyWisdom = await philosophyAI.generateDailyWisdom()
+          const welcomeMessage: Message = {
+            id: '1',
+            content: `Welcome to Philosophy Chat! I'm here to explore the depths of wisdom with you. 
 
 ${dailyWisdom}
 
 What would you like to explore today?`,
-          sender: 'assistant',
-          timestamp: new Date()
-        }
-        setMessages([welcomeMessage])
-      } catch (error) {
-        // Fallback welcome message
-        const fallbackQuote = getDailyQuote()
-        const welcomeMessage: Message = {
-          id: '1',
-          content: `Welcome to Philosophy Chat! I'm here to explore the depths of wisdom with you.
+            sender: 'assistant',
+            timestamp: new Date()
+          }
+          
+          conversationHistory.createNewConversation([welcomeMessage], context)
+        } catch (error) {
+          // Fallback welcome message
+          const fallbackQuote = getDailyQuote()
+          const welcomeMessage: Message = {
+            id: '1',
+            content: `Welcome to Philosophy Chat! I'm here to explore the depths of wisdom with you.
 
 **Daily Wisdom from ${fallbackQuote.author}** (${fallbackQuote.tradition})
 
@@ -52,17 +61,28 @@ What would you like to explore today?`,
 **Reflection:** ${fallbackQuote.reflection}
 
 What philosophical question or topic would you like to discuss today?`,
-          sender: 'assistant',
-          timestamp: new Date()
+            sender: 'assistant',
+            timestamp: new Date()
+          }
+          
+          conversationHistory.createNewConversation([welcomeMessage], context)
         }
-        setMessages([welcomeMessage])
       }
-    }
 
-    initializeChat()
-  }, [])
+      initializeChat()
+    }
+  }, [currentConversation, context, conversationHistory])
+
+  // Load context from current conversation
+  useEffect(() => {
+    if (currentConversation?.context) {
+      setContext(currentConversation.context)
+    }
+  }, [currentConversation])
 
   const handleSendMessage = async (content: string) => {
+    if (!currentConversation) return
+
     const userMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -70,19 +90,24 @@ What philosophical question or topic would you like to discuss today?`,
       timestamp: new Date()
     }
 
-    setMessages(prev => [...prev, userMessage])
+    const newMessages = [...messages, userMessage]
+    conversationHistory.updateConversation(currentConversation.id, { 
+      messages: newMessages,
+      context
+    })
+    
     setIsLoading(true)
 
     try {
       // Build conversation history for context
-      const conversationHistory = messages.slice(-6).map(msg => ({
+      const recentHistory = messages.slice(-6).map(msg => ({
         role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
         content: msg.content
       }))
 
       const updatedContext: ConversationContext = {
         ...context,
-        conversationHistory
+        conversationHistory: recentHistory
       }
 
       const response = await philosophyAI.generatePhilosophicalResponse(content, updatedContext)
@@ -94,7 +119,11 @@ What philosophical question or topic would you like to discuss today?`,
         timestamp: new Date()
       }
       
-      setMessages(prev => [...prev, assistantMessage])
+      const finalMessages = [...newMessages, assistantMessage]
+      conversationHistory.updateConversation(currentConversation.id, { 
+        messages: finalMessages,
+        context: updatedContext
+      })
     } catch (error) {
       console.error('Error generating response:', error)
       const errorMessage: Message = {
@@ -103,7 +132,11 @@ What philosophical question or topic would you like to discuss today?`,
         sender: 'assistant',
         timestamp: new Date()
       }
-      setMessages(prev => [...prev, errorMessage])
+      
+      const finalMessages = [...newMessages, errorMessage]
+      conversationHistory.updateConversation(currentConversation.id, { 
+        messages: finalMessages
+      })
     } finally {
       setIsLoading(false)
     }
@@ -111,6 +144,13 @@ What philosophical question or topic would you like to discuss today?`,
 
   const handleContextChange = (newContext: ConversationContext) => {
     setContext(newContext)
+    
+    // Update the current conversation's context
+    if (currentConversation) {
+      conversationHistory.updateConversation(currentConversation.id, { 
+        context: newContext 
+      })
+    }
   }
 
   return (

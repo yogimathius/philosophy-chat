@@ -1,22 +1,57 @@
 import { useState } from 'react'
 import ChatInterface from './components/ChatInterface'
+import ConversationSidebar from './components/ConversationSidebar'
+import { useConversationHistory } from './hooks/useConversationHistory'
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const conversationHistory = useConversationHistory()
+
+  const handleExportConversation = (conversationId: string) => {
+    try {
+      const exportData = conversationHistory.exportConversation(conversationId)
+      const conversation = conversationHistory.conversations.find(c => c.id === conversationId)
+      
+      const blob = new Blob([exportData], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `philosophy-chat-${conversation?.title || 'conversation'}-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error exporting conversation:', error)
+    }
+  }
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
       <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
         {/* Header */}
         <header className="border-b border-gray-200 dark:border-gray-700">
-          <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Philosophy Chat
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Your AI companion for daily wisdom and reflection
-              </p>
+          <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Philosophy Chat
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Your AI companion for daily wisdom and reflection
+                </p>
+              </div>
             </div>
             
             {/* Theme Toggle */}
@@ -37,9 +72,27 @@ function App() {
           </div>
         </header>
 
-        {/* Main Chat Area */}
-        <main className="max-w-4xl mx-auto px-4 py-6">
-          <ChatInterface />
+        {/* Main Content with Sidebar */}
+        <main className="flex h-[calc(100vh-73px)]">
+          {/* Conversation Sidebar */}
+          <ConversationSidebar
+            conversations={conversationHistory.conversations}
+            currentConversation={conversationHistory.currentConversation}
+            onSelectConversation={conversationHistory.switchToConversation}
+            onNewConversation={() => {
+              conversationHistory.createNewConversation()
+              setSidebarOpen(false)
+            }}
+            onDeleteConversation={conversationHistory.deleteConversation}
+            onExportConversation={handleExportConversation}
+            isOpen={sidebarOpen}
+            onToggle={() => setSidebarOpen(!sidebarOpen)}
+          />
+
+          {/* Chat Interface */}
+          <div className="flex-1 lg:pl-0">
+            <ChatInterface conversationHistory={conversationHistory} />
+          </div>
         </main>
       </div>
     </div>
