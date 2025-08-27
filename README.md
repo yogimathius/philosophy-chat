@@ -17,3 +17,21 @@ Meaning AI from Codex + consciousness research interests
 ## OS-Level Gain
 
 Philosophy reasoning engine for other wisdom-based apps
+
+## Development
+
+This is a React + TypeScript + Vite application.
+
+### Setup
+
+```bash
+npm install
+npm run dev
+```
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
