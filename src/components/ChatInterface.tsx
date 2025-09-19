@@ -5,13 +5,7 @@ import PhilosophySelector from './PhilosophySelector'
 import { philosophyAI, type ConversationContext } from '../services/openaiService'
 import { getDailyQuote } from '../data/philosophyQuotes'
 import type { useConversationHistory } from '../hooks/useConversationHistory'
-
-export interface Message {
-  id: string
-  content: string
-  sender: 'user' | 'assistant'
-  timestamp: Date
-}
+import type { Message } from '../types/chat'
 
 interface ChatInterfaceProps {
   conversationHistory: ReturnType<typeof useConversationHistory>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import DailyWisdom from './DailyWisdom'
 import { wisdomService, type DailyWisdom as DailyWisdomType, type WisdomPreferences } from '../services/wisdomService'
 import { getAllTraditions } from '../data/philosophyPrompts'
 
@@ -8,7 +7,7 @@ interface WisdomDashboardProps {
   onStartConversation: (topic: string) => void
 }
 
-const WisdomDashboard = ({ onStartReflection, onStartConversation }: WisdomDashboardProps) => {
+const WisdomDashboard = ({ onStartReflection: _onStartReflection, onStartConversation }: WisdomDashboardProps) => {
   const [preferences, setPreferences] = useState<WisdomPreferences | null>(null)
   const [showPreferences, setShowPreferences] = useState(false)
   const [wisdomHistory, setWisdomHistory] = useState<DailyWisdomType[]>([])
@@ -34,11 +33,6 @@ const WisdomDashboard = ({ onStartReflection, onStartConversation }: WisdomDashb
     wisdomService.setWisdomPreferences(newPrefs)
     setPreferences(newPrefs)
     setShowPreferences(false)
-  }
-
-  const handleExploreTheme = (theme: string) => {
-    const wisdom = wisdomService.getThemedWisdom(theme)
-    onStartReflection(wisdom)
   }
 
   const quickTopics = [
@@ -76,7 +70,14 @@ const WisdomDashboard = ({ onStartReflection, onStartConversation }: WisdomDashb
       </div>
 
       {/* Daily Wisdom Card */}
-      <DailyWisdom onStartReflection={onStartReflection} />
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Daily Wisdom
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          Daily wisdom content will be displayed here.
+        </p>
+      </div>
 
       {/* Quick Exploration Topics */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">

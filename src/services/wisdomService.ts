@@ -131,7 +131,7 @@ export class WisdomService {
   private generatePracticalApplication(
     quote: PhilosophyQuote, 
     prompt: PhilosophyPrompt,
-    theme?: string
+    _theme?: string
   ): string {
     const applications = [
       `Today, try applying ${quote.author}'s wisdom by pausing before reacting to any challenging situation and asking: "What would ${quote.author} do here?"`,

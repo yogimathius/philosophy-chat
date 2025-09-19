@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Message } from '../components/ChatInterface'
-import { ConversationContext } from '../services/openaiService'
+import type { Message } from '../types/chat'
+import type { ConversationContext } from '../services/openaiService'
 
 export interface Conversation {
   id: string

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Conversation } from '../hooks/useConversationHistory'
+import type { Conversation } from '../hooks/useConversationHistory'
 
 interface ConversationSidebarProps {
   conversations: Conversation[]
@@ -157,7 +157,7 @@ const ConversationSidebar = ({
             <div className="space-y-1 p-2">
               {filteredConversations.map((conversation) => (
                 <div
-                  key={conversation.id}
+                  key={`conversation-${conversation.id}`}
                   onClick={() => onSelectConversation(conversation.id)}
                   className={`
                     group p-3 rounded-lg cursor-pointer transition-colors relative
