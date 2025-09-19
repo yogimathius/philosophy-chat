@@ -32,15 +32,14 @@ function App() {
     }
   }
 
-  const handleStartReflection = (wisdom: DailyWisdom) => {
+  const handleStartReflection = (_wisdom: DailyWisdom) => {
     // Create a new conversation focused on reflection
-    const reflectionTopic = `I'd like to reflect on today's wisdom from ${wisdom.quote.author}: "${wisdom.quote.quote}". Let's explore this together.`
     conversationHistory.createNewConversation()
     setCurrentView('chat')
     setSidebarOpen(false)
   }
 
-  const handleStartConversation = (topic: string) => {
+  const handleStartConversation = (_topic: string) => {
     // Start a conversation with the given topic
     conversationHistory.createNewConversation()
     setCurrentView('chat')
