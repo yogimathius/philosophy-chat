@@ -38,6 +38,3 @@ AI philosophy companion for daily wisdom and reflection
 - Validate runtime claims in this README against current behavior and deployment configuration
 - Prioritize defect triage and integration repairs before introducing major new feature scope
 
-## Source of Truth
-- This README is intended to be the canonical project summary for portfolio alignment.
-- If portfolio copy diverges from this file, update the portfolio entry to match current implementation reality.
