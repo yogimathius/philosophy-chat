@@ -35,3 +35,27 @@ npm run dev
 - `npm run build` - Build for production
 - `npm run lint` - Run ESLint
 - `npm run preview` - Preview production build
+
+## Current Status
+
+- Frontend scaffold and product framing exist.
+- Backend/AI integration is not documented in this repo.
+- Operational estimate: **25%** (concept + UI scaffold).
+
+## Fixme Rationale
+
+- Marked `_fixme` likely because the MVP is not fully implemented or integrated.
+
+## API Endpoints
+
+- None documented.
+
+## Tests
+
+- No test suite detected.
+
+## Future Work
+
+- Implement AI chat backend and API integration.
+- Add conversation history and persistence.
+- Add tests for chat flows and error handling.
