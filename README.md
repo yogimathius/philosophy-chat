@@ -2,60 +2,39 @@
 
 AI philosophy companion for daily wisdom and reflection
 
-## Project Overview
+## Scope and Direction
+- Project path: `_fixme/philosophy-chat`
+- Primary tech profile: Node.js/TypeScript or JavaScript, Python
+- Audit date: `2026-02-08`
 
-- **Market**: 12M+ philosophy students + 3M+ Stoicism practitioners
-- **MVP Timeline**: 3 weeks
-- **Tech Stack**: Chat interface + curated philosophy prompts + OpenAI
-- **Revenue Model**: $8.99/month for unlimited conversations
-- **Joy Factor**: ⭐⭐⭐⭐⭐ Daily philosophical exploration
-
-## Connection to Existing Work
-
-Meaning AI from Codex + consciousness research interests
-
-## OS-Level Gain
-
-Philosophy reasoning engine for other wisdom-based apps
-
-## Development
-
-This is a React + TypeScript + Vite application.
-
-### Setup
-
-```bash
-npm install
-npm run dev
-```
-
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
-
-## Current Status
-
-- Frontend scaffold and product framing exist.
-- Backend/AI integration is not documented in this repo.
-- Operational estimate: **25%** (concept + UI scaffold).
-
-## Fixme Rationale
-
-- Marked `_fixme` likely because the MVP is not fully implemented or integrated.
+## What Appears Implemented
+- Detected major components: `backend/`, `src/`
+- Source files contain API/controller routing signals
+- Root `package.json` defines development/build automation scripts
 
 ## API Endpoints
+- Direct route strings detected:
+- `/health`
+- `/health/detailed`
+- `/`
+- `/message`
+- `/analyze`
+- `/context/{conversation_id}`
+- `/suggest-questions`
 
-- None documented.
+## Testing Status
+- `pytest` likely applies for Python components
+- This audit did not assume tests are passing unless explicitly re-run and captured in this session
 
-## Tests
+## Operational Assessment
+- Estimated operational coverage: **54%**
+- Confidence level: **medium**
 
-- No test suite detected.
+## Bucket Rationale
+- This project sits in `_fixme`, indicating known functional or integration issues still need correction before it should be treated as stable.
 
 ## Future Work
-
-- Implement AI chat backend and API integration.
-- Add conversation history and persistence.
-- Add tests for chat flows and error handling.
+- Consolidate and document endpoint contracts with examples and expected payloads
+- Run the detected tests in CI and track flakiness, duration, and coverage
+- Validate runtime claims in this README against current behavior and deployment configuration
+- Prioritize defect triage and integration repairs before introducing major new feature scope
